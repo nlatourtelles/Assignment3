@@ -1,6 +1,82 @@
 
 // GameBoard code below
+function dateBase(gameEngine) {
+    this.gameEngine = gameEngine;
+    var socket = io.connect("http://24.16.255.56:8888");
+  
+    socket.on("load", function (circleState) {
+        console.log(circleState.data);
+        gameEngine.removeAll();
+        cirArray = circleState.data.split("|");
+        // console.log(cirArray[0]);
+        for(i = 0; i < cirArray.length - 1; i++) {
+            cir = String(cirArray[i]);
+            // console.log(cir);
+            cir2 = cir.split(",");
+            // console.log(parseInt(cir2[0]));
+            var circle = new Circle(gameEngine);
+            circle.color = parseInt(cir2[0]);
+            console.log(circle.color);
+            circle.velocity.x = parseFloat(cir2[4]);
+            circle.velocity.y = parseFloat(cir2[5]);
+            if(String(cir2[1]) === "true") {
+                circle.infected = true;
+                circle.citizen = false;
+            }
 
+            if(String(cir2[2]) === "true") {
+                circle.doctor = true;
+                circle.citizen = false;
+            }
+
+            circle.x = parseFloat(cir2[6]);
+            circle.y = parseFloat(cir2[7]);
+            gameEngine.addEntity(circle);
+        
+        }
+        console.log(gameEngine.entities);
+    });
+  
+    var text = document.getElementById("text");
+    var saveButton = document.getElementById("save");
+    var loadButton = document.getElementById("load");
+  
+    saveButton.onclick = function () {
+      console.log("save");
+      text.innerHTML = "Saved."
+      circles = "";
+      for(i = 0; i < gameEngine.entities.length; i++) {
+          cir = gameEngine.entities[i];
+          tempString = "";
+          tempString += String(cir.color);
+          tempString +=",";
+          tempString += String(cir.infected);
+          tempString += ",";
+          tempString += String(cir.doctor);
+          tempString += ",";
+          tempString += cir.citizen;
+          tempString +=",";
+          tempString += cir.velocity.x;
+          tempString += ",";
+          tempString += cir.velocity.y;
+          tempString += ",";
+          tempString += cir.x;
+          tempString += ",";
+          tempString += cir.y;
+          tempString += "|";
+          circles += tempString;
+      }
+      socket.emit("save", { studentname: "Nicholas La Tour-Telles", statename: "VirusSpread", data: circles });
+    };
+  
+    loadButton.onclick = function () {
+      console.log("load");
+      text.innerHTML = "Loaded."
+      socket.emit("load", { studentname: "Nicholas La Tour-Telles", statename: "VirusSpread" });
+    };
+  
+  };
+  
 function distance(a, b) {
     var difX = a.x - b.x;
     var difY = a.y - b.y;
@@ -68,11 +144,14 @@ Circle.prototype.update = function () {
             if(this.infected) {
                 if(ent.citizen) {
                     num = Math.random() * 100;
+                    console.log(num);
+
                     // console.log(num);
                     if (num < 11) {
                         ent.citizen = false;
                         ent.infected = true;
                         ent.color = 0;
+                        console.log("infected");
                         
                     }
                 }
@@ -81,7 +160,7 @@ Circle.prototype.update = function () {
             if(this.doctor) {
                 if(ent.infected) {
                     num = Math.random() * 100;
-                    console.log(num);
+                    // console.log(num);
                     if (num < 11) {
                         ent.citizen = true;
                         ent.infected = false;
@@ -142,6 +221,7 @@ ASSET_MANAGER.downloadAll(function () {
     var ctx = canvas.getContext('2d');
 
     var gameEngine = new GameEngine();
+    window.onload = dateBase(gameEngine);
     var circle = new Circle(gameEngine);
     circle.color = 0;
     circle.infected = true;

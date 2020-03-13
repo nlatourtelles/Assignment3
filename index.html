@@ -6,9 +6,13 @@
     <title>WebGo</title>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
+    <script type="text/javascript" src="http://24.16.255.56:8888/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="./main.js"></script>
 </head>
 <body>
+    <div id = "text"></div>
+    <button id="save" type="button">Save</button>
+    <button id="load" type="button">Load</button>
     <div>The blue circles are doctors. The red circles are people infected with the disease. The white circles are regular people<br />
         When an infected person touches a regular person there is a 10% chance of infecting that person.<br />
         When a doctor touches an infected person there is a 10% of the doctor healing the infected person.

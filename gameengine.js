@@ -57,6 +57,10 @@ GameEngine.prototype.start = function () {
     })();
 }
 
+GameEngine.prototype.removeAll = function() {
+    this.entities = [];
+}
+
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
     var that = this;
@@ -95,7 +99,7 @@ GameEngine.prototype.startInput = function () {
 }
 
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity');
+    // console.log('added entity');
     this.entities.push(entity);
 }
 
